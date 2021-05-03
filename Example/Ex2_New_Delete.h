@@ -8,11 +8,15 @@
 #include <string>
 #include <iostream>
 
+#define YEAR 60*60*24*365
+#define DAY 60*60*24
+
 class Data{
 private:
     int year_;
     int month_;
     int day_;
+    int unix_time
 
 public:
     void SetData(int year, int month, int data)
@@ -55,9 +59,9 @@ private:
     std::string CheckNoiseData(const int year,const int month, const int day)
     {
         std::string str = "[Info] Data Setup Completed";
-        if(year <= 0)
+        if(year < 1970)
         {
-            str = "[Error] the year must be greater than 0";
+            str = "[Error] the year must be greater than 1970";
             return  str;
         }
 
@@ -76,9 +80,6 @@ private:
         year_ = year;
         month_ = month;
         day_ = day;
-        CalculateLastDay();
-
-        str = ( last_day_array[month_%2] < day ) ? "[Error] Please re-input the data" : str;
         return  str;
     }
 };
