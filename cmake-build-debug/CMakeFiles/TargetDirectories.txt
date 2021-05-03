@@ -1,3 +1,0 @@
-C:/Users/momantic03/workspace/cpp/Psi/cmake-build-debug/CMakeFiles/Psi.dir
-C:/Users/momantic03/workspace/cpp/Psi/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/momantic03/workspace/cpp/Psi/cmake-build-debug/CMakeFiles/rebuild_cache.dir

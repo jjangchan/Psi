@@ -92,12 +92,12 @@ clean: CMakeFiles/Psi.dir/clean
 CMakeFiles/Psi.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Psi.dir\build.make CMakeFiles/Psi.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Psi.dir\build.make CMakeFiles/Psi.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\momantic03\workspace\cpp\Psi\cmake-build-release\CMakeFiles --progress-num=1,2 "Built target Psi"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\momantic03\workspace\cpp\Psi\cmake-build-release\CMakeFiles --progress-num=1,2,3 "Built target Psi"
 .PHONY : CMakeFiles/Psi.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/Psi.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\momantic03\workspace\cpp\Psi\cmake-build-release\CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\momantic03\workspace\cpp\Psi\cmake-build-release\CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/Psi.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\momantic03\workspace\cpp\Psi\cmake-build-release\CMakeFiles 0
 .PHONY : CMakeFiles/Psi.dir/rule

@@ -7,7 +7,7 @@ using namespace std;
 int main() {
     Data *data = new Data();
 
-    data->SetData(1, 6, 31);
+    data->SetData(2020, 12, 31);
 
     delete data;
     data = nullptr;
