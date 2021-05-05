@@ -1,3 +1,14 @@
+.DS_Store
+Algorithm
+CMakeCache.*
+CMakeFiles/*
+Makefile
+*.cbp
+cmake-build-debug/*
+Cmake-build-release/*
+cmake_install.cmake
+.idea/*
+
 # Prerequisites
 *.d
 

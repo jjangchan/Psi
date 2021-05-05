@@ -8,11 +8,16 @@
 #include <string>
 #include <iostream>
 
+#define YEAR 60*60*24*365
+#define DAY 60*60*24
+
 class Data{
 private:
     int year_;
     int month_;
     int day_;
+    int unix_time;
+    int month_array[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 public:
     void SetData(int year, int month, int data)
@@ -37,19 +42,23 @@ public:
     }
 
 private:
-    int CalculateLastDay(const int index)
+    void CalculateData(const int year, const int month)
     {
-        int last_day_array[3];
-        // leap month
-        last_day_array[2] = (year_%4 == 0) ? 29 : 28;
+        int cal_month = month%12;
+        year_ = year + cal_month;
+        month_ = cal_month;
+        month_array[1] = (year_%4 == 0) ? 29 : 28;
+    }
 
-        // odd month
-        last_day_array[1] = (month_ >= 8) ? 30 : 31;
+    int DataToUnix()
+    {
+        int unix;
+        return unix;
+    }
 
-        // even month
-        last_day_array[0] = (month_ >= 8) ? 31 : 30;
+    void UnixToData()
+    {
 
-        return  last_day_array[index];
     }
 
     std::string CheckNoiseData(const int year,const int month, const int day)
@@ -76,9 +85,6 @@ private:
         year_ = year;
         month_ = month;
         day_ = day;
-        CalculateLastDay();
-
-        str = ( last_day_array[month_%2] < day ) ? "[Error] Please re-input the data" : str;
         return  str;
     }
 };
