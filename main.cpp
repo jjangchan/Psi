@@ -5,11 +5,13 @@
 using namespace std;
 
 int main() {
-    Data *data = new Data();
+    Date*date= new Date();
 
-    data->SetData(2020, 12, 31);
 
-    delete data;
-    data = nullptr;
+    date->SetDate(2011, 11, 29);
+    date->AddDay(520);
+
+    delete date;
+    date = nullptr;
     return 0;
 }

@@ -1,5 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Psi.dir/Example/PrivateAccessError.cpp.obj"
   "CMakeFiles/Psi.dir/main.cpp.obj"
   "Psi.exe"
   "Psi.exe.manifest"

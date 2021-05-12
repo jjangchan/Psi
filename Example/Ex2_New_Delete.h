@@ -12,7 +12,7 @@
 #define DAY (60*60*24)
 #define INITYEAR 1970
 
-class Data{
+class Date{
 private:
     int year_;
     int month_;
@@ -24,36 +24,82 @@ private:
     int sum_array[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
 public:
-    void SetData(int year, int month, int data)
+    Date(){}
+    ~Date(){}
+
+    void SetDate(int year, int month, int Date)
     {
-        std::string str = CheckNoiseData(year, month, data);
+        std::string str = CheckNoiseData(year, month, Date);
         cout << str << endl;
     }
 
     void AddDay(int increase)
     {
-
+        int current_day = sum_array[month_-1] + day_;
+        current_day += increase;
+        int cal_day = CalculateYear(current_day, sum_array[11]+31);
+        int leap = (year_%4 == 0) ? 29 : 28;
+        month_array[1] = leap;
+        month_ = BinarySearchToValue(cal_day, 0, 11);
+        day_ = cal_day- sum_array[month_-1];
+        unix_time = DateToUnix();
+        UnixToDate();
+        PrintDate();
     }
 
     void AddMonth(int increase)
     {
         int month = month_+increase;
-        year_ += month/12;
-        //month_array[1] = CalculateLeap();
+        int year_count = month/12;
+        month %= 12;
+
+        month_ = (month != 0) ? month : 12;
+        year_ = (month == 0) ? year_+(--year_count) : year_+year_count;
+
+        int leap = (year_%4 == 0) ? 29 : 28;
+        month_array[1] = leap;
+        unix_time = DateToUnix();
+        UnixToDate();
     }
 
     void AddYear(int increase)
     {
         year_ += increase;
-        //month_array[1] = CalculateLeap();
+        int leap = (year_%4 == 0) ? 29 : 28;
+        month_array[1] = leap;
+        unix_time = DateToUnix();
+        UnixToDate();
     }
 
 private:
+    int CalculateYear(const int day, const int total)
+    {
+        int cal = day/(sum_array[11]+32);
+        if(cal == 0)
+            return  day;
+        year_ += 1;
+        int leap = (year_%4 == 0) ? 29 : 28;
+        month_array[1] = leap;
+        InsertMonthData();
+        return CalculateYear(day-total, sum_array[11]+31);
+    }
+
     int CalculateLeap(const int year_distance)
     {
         int leap = (year_distance+2)/4;
         int cal_leap = ((year_distance+2)%4 == 0 && month_ < 3) ? --leap : leap;
         return cal_leap;
+    }
+
+    void InsertMonthData()
+    {
+        int sum = 0;
+        sum_array[0] = 0;
+        for(int i = 1; i < 12; i++)
+        {
+            sum += month_array[i-1];
+            sum_array[i] = sum;
+        }
     }
 
 
@@ -67,19 +113,20 @@ private:
 
     void UnixToDate()
     {
-        double year = (double)unix_time/(double)YEAR;
-        year_ = INITYEAR+(int)year;
+        InsertMonthData();
         int year_distance = year_-INITYEAR;
+        double unix = unix_time- (CalculateLeap(year_distance)*DAY);
+
+
+        double year = unix/(double)YEAR;
+        year_ = INITYEAR+(int)year;
+
         double day = (year-(int)year) * 365;
-        cout << year_ << endl;
-        int weight = (year_%4 == 0) ? 1 : 0;
-        day = day-CalculateLeap(year_distance)+1+weight;
-        cout << "day : " << day << endl;
-        cout << weight << endl;
-        day = (day < 0) ? 365+day: day;
-        int month = BinarySearchToValue(day, 0, 11);
-        cout << "month : " << month_<< endl;
-        cout << "day : " << day << endl;
+        day = ((year_distance+2)%4 == 0 && 2 < month_ ) ? day+2.0 : day+1.0;
+        day += 0.5 - (day<0);
+
+        month_ = BinarySearchToValue((int)day, 0, 11);
+        day_ = day- sum_array[month_-1];
     }
 
     double CalculateDay(const int* array, const int index, const int day)
@@ -91,7 +138,7 @@ private:
         return CalculateDay(array, index+1, day/array[index]);
     }
 
-    int BinarySearchToValue(const double price, const int low, const int high)
+    int BinarySearchToValue(const int price, const int low, const int high)
     {
         if (low > high)
         {
@@ -115,7 +162,7 @@ private:
 
     std::string CheckNoiseData(const int year,const int month, const int day)
     {
-        std::string str = "[Info] Data Setup Completed";
+        std::string str = "[Info] Date Setup Completed";
         year_ = year;
         month_ = month;
         day_ = day;
@@ -136,13 +183,20 @@ private:
         month_array[1] = leap;
         if(day <= 0 || month_array[month-1] < day)
         {
-            str = "[Error] the data must be greater than 0 and less than "+std::to_string(month_array[month-1]);
+            str = "[Error] the Date must be greater than 0 and less than "+std::to_string(month_array[month-1]);
             return  str;
         }
         unix_time = DateToUnix();
-        std::cout << "unxi time : " << unix_time << endl;
         UnixToDate();
         return  str;
+    }
+
+    void PrintDate()
+    {
+        cout << "unix time : " << unix_time << endl;
+        cout << "year : " << year_<< endl;
+        cout << "month : " << month_ << endl;
+        cout << "day : " << day_ << endl;
     }
 };
 
