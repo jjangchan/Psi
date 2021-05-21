@@ -1,5 +1,5 @@
 //
-// Created by momantic03 on 2021-05-12.
+// Created by jjangchan 2021-05-12.
 //
 
 #ifndef EX2_NEW_DELETE_H_EX3_MATH_H
@@ -110,6 +110,22 @@ private:
         return  InsertLineData(line, index+1, end);
     }
 
+
+    //vertex is the intersection = nC2
+    int Factorial(int value, int num){
+        if(num <= 1) return  value;
+        return Factorial(value*(--num), num);
+    }
+
+    int CalculateN(const int n, const int r, const int value = 1){
+        if(0 >= r) return  value;
+        return CalculateN(n-1, r-1, value*n);
+    }
+
+    int Combination(int n, int r){
+        int rum = r;
+        return CalculateN(n, r)/ Factorial(rum, rum);
+    }
 };
 
 #endif //EX2_NEW_DELETE_H_EX3_MATH_H
