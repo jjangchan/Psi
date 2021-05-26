@@ -1,8 +1,5 @@
-#include "Example/Ex1_Reference.h"
-#include "Example/Ex2_New_Delete.h"
 #include "Example/Ex3_Math.h"
 
-using namespace std;
 
 int Factorial(int value, int num){
     if(num <= 1) return  value;
@@ -22,16 +19,19 @@ int Combination(int n, int r){
 
 
 int main() {
-    int fact = Combination(5, 2);
-    cout << fact << endl;
-    //Point point1 = Point(0, 0);
-    //Point point2 = Point(3, 4);
-    //Point point3 = Point(3, 6);
-    //Geometry *geometry = new Geometry();
-    //geometry->AddPoint(point1);
-    //geometry->AddPoint(point2);
-    //geometry->AddPoint(point3);
-    ////geometry->PrintDistance();
-    //geometry->PrintNumMeets();
+    Point point1 = Point(0, 0);
+    Point point2 = Point(3, 4);
+    Point point3 = Point(2, 5);
+    Point point4 = Point(10, 5);
+    Point point5 = Point(15, 5);
+    Geometry *geometry = new Geometry();
+    geometry->AddPoint(point1);
+    geometry->AddPoint(point2);
+    geometry->AddPoint(point3);
+    geometry->AddPoint(point4);
+    geometry->AddPoint(point5);
+    //geometry->PrintDistance();
+
+    geometry->PrintNumMeets();
     return 0;
 }

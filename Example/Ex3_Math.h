@@ -53,28 +53,25 @@ public:
             std::cout << "please add point" << std::endl;
             return;
         }
-        int current_x = point_array[0]->GetX();
-        int current_y = point_array[0]->GetY();
         double sum_distance = 0;
-        for(int i = 1; i<num_point; i++){
-            CalculateDistance(current_x, current_y, i, sum_distance);
-            current_x = point_array[i]->GetX();
-            current_y = point_array[i]->GetY();
+        for(int i = 0; i<num_point; i++){
+            int current_x = point_array[i]->GetX();
+            int current_y = point_array[i]->GetY();
+            CalculateDistance(current_x, current_y, i+1, sum_distance);
         }
-        cout << "total distance : " << sum_distance << endl;
+        std::cout << "total distance : " << sum_distance << std::endl;
     }
 
     void PrintNumMeets(){
-        std::queue<pair<Point*, Point*>> meets;
+        std::queue<std::pair<Point*, Point*>> meets;
         std::vector<std::vector<Point*>> lines;
         InsertMeetsData(meets, lines);
-        cout << "vector size : " << lines.size() << endl;
+        std::cout << "vector size : " << lines.size() << std::endl;
         while (!meets.empty()){
             Point* point1 = meets.front().first;
             Point* point2 = meets.front().second;
             meets.pop();
-            cout << "[Point1] x : " << point1->GetX() << " y : " << point1->GetY() << endl;
-            cout << "[Point2] x : " << point2->GetX() << " y : " << point2->GetY() << endl;
+            std::cout << "(" << point1->GetX() << " , " << point1->GetY() << ") , (" << point2->GetX() << " , " << point2->GetY() << ")" << std::endl;
         }
     }
 
@@ -85,33 +82,38 @@ private:
         int current_x = point_array[index]->GetX();
         int current_y = point_array[index]->GetY();
         double distance = std::sqrt(std::pow((x-current_x),2)+std::pow((y-current_y),2));
-        std::cout << "distance : " << distance << endl;
+        std::cout << "distance : " << distance << std::endl;
         sum_distance += distance;
         return CalculateDistance(x, y, index+1, sum_distance);
     }
 
-    void InsertMeetsData(std::queue<pair<Point*, Point*>> &meets, std::vector<std::vector<Point*>> &lines){
-        for(int i=1; i<num_point; i++){
-            pair<Point*, Point*> points = make_pair(point_array[0], point_array[i]);
-            meets.push(points);
-            std::vector<Point*> line;
-            InsertLineData(line, 1, i);
-            lines.push_back(line);
+    void InsertMeetsData(std::queue<std::pair<Point*, Point*>> &meets, std::vector<std::vector<Point*>> &lines){
+
+        int total_count = Combination(Combination(num_point, 2), 2);
+        int vertex, intersection_count, sum_count = 0;
+
+        for(int i=0; i<num_point-3; i++){
+            for(int j = i+1; j < num_point; j++){
+                std::pair<Point*, Point*> points = std::make_pair(point_array[i], point_array[j]);
+                meets.push(points);
+                std::vector<Point*> line;
+                InsertLineData(line, i+1, j);
+                lines.push_back(line);
+            }
         }
-
+        //sum_count =
     }
 
-    int InsertLineData(std::vector<Point*> &line, const int index, const int end){
+    int InsertLineData(std::vector<Point*> &line, const int index, const int end, const int count = 0){
         if(index == num_point)
-            return -1;
+            return count;
         if(index == end)
-            return InsertLineData(line, index+1, end);
+            return InsertLineData(line, index+1, end, count);
         line.push_back(point_array[index]);
-        return  InsertLineData(line, index+1, end);
+        return  InsertLineData(line, index+1, end, count+1);
     }
 
-
-    //vertex is the intersection = nC2
+    //intersection = (nC2)C2
     int Factorial(int value, int num){
         if(num <= 1) return  value;
         return Factorial(value*(--num), num);
