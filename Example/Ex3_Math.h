@@ -138,7 +138,7 @@ private:
         return  InsertLineData(line, index+1, end, count+1);
     }
 
-    //intersection = (nC2)C2
+    //두 직선의 고르는 모든 경우의 수 = (nC2)C2
     int combination(int n, int r)
     {
         if(n == r || r == 0)
