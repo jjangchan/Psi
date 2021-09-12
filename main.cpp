@@ -1,38 +1,37 @@
-#include <iostream>
-//#include "Example/Ex1_Reference.h"
-//#include "Example/Ex2_New_Delete.h"
+#include "Example/Ex1_Reference.h"
+#include "Example/Ex2_New_Delete.h"
+#include "Example/Ex3_Math.h"
 
 using namespace std;
 
-double Calculate(const double x,
-                 const int end,
-                 const double weight,
-                 const double value = 0){
-    if(x >= end)
-        return value;
-    double numerator = 1;
-    double calculate_x = pow(x, 2);
-    double denominator = calculate_x + 1;
-    double fx = numerator/denominator;
-    return Calculate(x+weight, end, weight,value+(weight*fx));
+int Factorial(int value, int num){
+    if(num <= 1) return  value;
+    return Factorial(value*(--num), num);
 }
 
+
+int CalculateN(const int n, const int r, const int value = 1){
+    if(0 >= r) return  value;
+    return CalculateN(n-1, r-1, value*n);
+}
+
+int Combination(int n, int r){
+    int rum = r;
+    return CalculateN(n, r)/ Factorial(rum, rum);
+}
+
+
 int main() {
-    int a = 0;
-    int b = 1;
-    double emphasis = 1.0/2.0;
-
-    for(int n=5; n<=100; n++){
-        double weight = (double)(b-a)/(double)n;
-        double x = weight*emphasis;
-        weight = x * 2.0;
-        double value = Calculate(x, b, weight);
-        cout << value << endl;
-    }
-
-    //Data *data = new Data();
-    //data->SetData(2020, 12, 31);
-    //delete data;
-    //data = nullptr;
-    //return 0;
+    int fact = Combination(5, 2);
+    cout << fact << endl;
+    //Point point1 = Point(0, 0);
+    //Point point2 = Point(3, 4);
+    //Point point3 = Point(3, 6);
+    //Geometry *geometry = new Geometry();
+    //geometry->AddPoint(point1);
+    //geometry->AddPoint(point2);
+    //geometry->AddPoint(point3);
+    ////geometry->PrintDistance();
+    //geometry->PrintNumMeets();
+    return 0;
 }
