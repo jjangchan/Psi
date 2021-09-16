@@ -147,8 +147,38 @@ public:
 
     MyString& erase(const int loc, const int num){
         // out of range
-        if(loc < 0 || num < 0 || loc+num > string_length) return *this;
+        if(loc < 0 || num < 0 || loc >= string_length) return *this;
+        if(loc+num < string_length){
+            for(int i = loc+num; i < string_length; i++) string_content[i-num] = string_content[i];
+            string_length -= num;
+        }
+        else string_length = 0;
         return *this;
+    }
+
+    int find(const int start, const MyString& string)
+    {
+        return -1;
+    }
+
+    int find(const int start, const char* string){
+        MyString temp(string);
+        return find(start, temp);
+    }
+
+    int find(const int start, const char c){
+        MyString temp(c);
+        return find(start, temp);
+    }
+
+    int compare(const MyString& string) const{
+        for(int i = 0; i < std::min(string_length, string.string_length); i++){
+            if(string_content[i] > string.string_content[i]) return 1;
+            else if(string_content[i] < string.memory_capacity[i]) return -1;
+        }
+        if(string_length == string.string_length) return 0;
+        else if(string_length > string.string_length) return 1;
+        return -1;
     }
 
 
