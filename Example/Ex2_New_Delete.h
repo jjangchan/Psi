@@ -17,7 +17,6 @@ private:
     int year_;
     int month_;
     int day_;
-
     //utc+0
     int unix_time;
     int month_array[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -186,6 +185,7 @@ private:
             str = "[Error] the Date must be greater than 0 and less than "+std::to_string(month_array[month-1]);
             return  str;
         }
+
         unix_time = DateToUnix();
         UnixToDate();
         return  str;

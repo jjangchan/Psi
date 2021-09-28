@@ -23,6 +23,7 @@ public:
     }
 
     MyString(const MyString &string){
+        std::cout << "copy constructor : " << this << std::endl;
         string_length = string.string_length;
         memory_capacity = string.string_length;
         string_content = new char[string_length];
@@ -32,6 +33,7 @@ public:
     }
 
     MyString(const char *string){
+        std::cout << "constructor : " << this << std::endl;
         string_length = Getlen(string);
         memory_capacity = string_length;
         string_content = new char[string_length];
@@ -42,6 +44,33 @@ public:
 
     ~MyString(){
         delete[] string_content;
+    }
+
+    MyString operator+(const MyString& str) const{
+        char *temp_str = new char[string_length+str.string_length];
+        for(int i = 0; i < string_length+str.string_length; i++)
+            temp_str[i] = (i < string_length) ? string_content[i] : str.string_content[i-string_length];
+        MyString temp(temp_str);
+        std::cout << "operator : " << &temp << std::endl;
+        delete[] temp_str;
+        return temp;
+    }
+
+    MyString& operator+=(const MyString& str){
+        (*this) = (*this) + str;
+        return (*this);
+    }
+
+    MyString& operator=(const MyString& string){
+        // 수정해야함
+        string_length = string.string_length;
+        if(string.string_length > memory_capacity) memory_capacity = string.string_length;
+        delete []string_content;
+        string_content = new char[string.string_length];
+        for(int i = 0; i < string_length; i++){
+            string_content[i] = string.string_content[i];
+        }
+        return *this;
     }
 
     int length() const{
@@ -174,7 +203,7 @@ public:
     int compare(const MyString& string) const{
         for(int i = 0; i < std::min(string_length, string.string_length); i++){
             if(string_content[i] > string.string_content[i]) return 1;
-            else if(string_content[i] < string.memory_capacity[i]) return -1;
+            else if(string_content[i] < string.string_content[i]) return -1;
         }
         if(string_length == string.string_length) return 0;
         else if(string_length > string.string_length) return 1;
