@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> 6abec2df90a3d68a9dca455b1d040a8652790ffc
 .DS_Store
 Algorithm
 CMakeCache.*
@@ -10,10 +6,6 @@ Makefile
 *.cbp
 cmake-build-release/*
 cmake-build-debug/*
-<<<<<<< HEAD
-Cmake-build-release/*
-=======
->>>>>>> 6abec2df90a3d68a9dca455b1d040a8652790ffc
 cmake_install.cmake
 .idea/*
 

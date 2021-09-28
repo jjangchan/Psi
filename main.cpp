@@ -1,15 +1,16 @@
-#include "Example/Ex5MyString.h"
+#include <iostream>
+#include <string>
+#include "Example/EX6Complex.h"
 
-template <typename T>
-void println(T *t, int data_size)
-{
-    for(int i = 0; i < data_size; i++) std::cout << t[i] << std::endl;
-}
-int main() {
-    double *d = new double[100];
-    for(int i = 0; i < 100; i++) d[i] = i;
-    println(d, 100);
+int main(){
+    Complex a(0, 0);
+    a = "-1.1 + i3.923" + a;
+    a = a + a;
 
-    delete d;
+    Complex b(1, 2);
+    b = a + b;
+
+    b.println();
+    std::cout << "a 의 값은 : " << a << " 이다. " << std::endl;
     return 0;
 }
