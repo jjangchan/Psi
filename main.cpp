@@ -1,28 +1,36 @@
 #include <iostream>
-#include <cstring>
+#include <chrono>
+#include "Example/ex7-array.h"
 
-class Test{
-private:
-    int a;
+class Base{
 public:
-    Test(int a) : a(a){}
-    Test(const Test& t): a(t.a){std::cout <<"copy : " << this << std::endl;}
-    ~Test(){}
-    Test& operator++() {
-        a++;
-        return *this;
+    std::string s1;
+public:
+    Base() : s1("base"){ std::cout << "base class" << std::endl;}
+    void println() const {std::cout << s1 << std::endl;}
+
+};
+
+class Derived : public Base{
+private:
+    std::string s;
+public:
+    Derived() : Base(), s("derived") {
+        std::cout << "derived class" << std::endl;
     }
-    Test operator++(int){
-        Test temp(*this);
-        a++;
-        return temp;
-    }
-    Test& operator=(const Test& t){
-        a = t.a;
-        return *this;
-    }
+    void println() const {std::cout << s << std::endl;}
 };
 
 int main() {
-    return 0;
+    Base b;
+    Derived d;
+
+    Base* p_b = &d;
+    Derived* p_d= static_cast<Derived*>(p_b);
+
+    p_d->println();
+
+    //Array array;
+    //array[2][2][3]; // -> array.operator[](2),operator[](2).operator[](3);
+    return 1;
 }
