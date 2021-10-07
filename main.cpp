@@ -1,16 +1,41 @@
 #include <iostream>
+#include <vector>
 #include <string>
-#include "Example/EX6Complex.h"
+#include <unordered_map>
+#include <algorithm>
 
-int main(){
-    Complex a(0, 0);
-    a = "-1.1 + i3.923" + a;
-    a = a + a;
+class ResultPrint{
+private:
+    std::vector<std::string> v;
+public:
+    ResultPrint(std::vector<std::string> v) : v(v){}
+    ResultPrint(const ResultPrint& result): v(result.v){}
+    ~ResultPrint(){}
+    friend std::ostream& operator<<(std::ostream& os, const ResultPrint& result);
+};
 
-    Complex b(1, 2);
-    b = a + b;
+std::ostream &operator<<(std::ostream &os, const ResultPrint &result) {
+    std::unordered_map<std::string, int> m;
+    for(auto &s : result.v)m[s]++;
+    std::vector<std::string> not_overlap;
+    std::vector<std::string> overlap;
+    for(auto &pair : m) {
+        if(pair.second == 1) not_overlap.push_back(pair.first);
+        else overlap.push_back(pair.first);
+    }
+    for(auto &s : not_overlap) os << s << std::endl;
+    os << "=========================================" << std::endl;
+    for(auto &s : overlap) os << s << std::endl;
+    return os;
+}
 
-    b.println();
-    std::cout << "a 의 값은 : " << a << " 이다. " << std::endl;
-    return 0;
+int main() {
+    std::vector<std::string> v = {"abc", "aaaa", "avasd", "cdsff", "aaaa", "dasdfff", "cdsff"};
+    ResultPrint result(v);
+    std::cout << result;
+
+    //시간복잡도
+    // v.size x 1  + m.size + not_overlap.size + overlap.size
+
+    return 1;
 }
