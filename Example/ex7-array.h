@@ -151,7 +151,7 @@ namespace MyArray {
                 return;
             }
             current->next = new Address[size[current->level]];
-            // BFS Search
+            // DFS Search
             for (int i = 0; i != size[current->level]; i++) {
                 (static_cast<Address *>(current->next) + i)->level = current->level + 1;
                 InitializeAddress(static_cast<Address *>(current->next) + i);
