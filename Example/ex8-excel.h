@@ -6,6 +6,7 @@
 #define MAIN_CPP_EX8_EXCEL_H
 #include <string>
 #include <sstream>
+#include <algorithm>
 #include <iostream>
 
 class Vector{
@@ -169,8 +170,8 @@ public:
     }
     ~Table(){
         for(int i = 0; i < row_size; i++) for(int j = 0; j < col_size; j++){
-            if(data_base[i][j] != nullptr) delete data_base[i][j];
-        }
+                if(data_base[i][j] != nullptr) delete data_base[i][j];
+            }
         for(int i = 0; i < row_size; i++) delete[] data_base[i];
         delete[] data_base;
     }
@@ -178,10 +179,10 @@ public:
 
     void reg_cell(Cell *c, int row, int col){
         if(row >= row_size || col >= col_size) return;
-        if(data_base[row-1][col-1] != nullptr){
-            delete data_base[row-1][col-1];
+        if(data_base[row][col] != nullptr){
+            delete data_base[row][col];
         }
-        data_base[row-1][col-1] = c;
+        data_base[row][col] = c;
     }
 
     int to_numeric(const std::string& s){
@@ -226,10 +227,108 @@ class TextTable : public Table {
 private:
 public:
     TextTable(const int row_size, const int col_size): Table(row_size, col_size){}
+
     std::string print_table() override{
-        return "";
+        std::string total_table;
+        int *col_max_arr = new int[col_size];
+        for(int i = 0; i < col_size; i++){
+            unsigned int col_max = 2;
+            for(int j = 0; j < row_size; j++){
+                if(data_base[j][i] != nullptr){
+                    unsigned int col_size = data_base[j][i]->stringify().length();
+                    col_max = std::max(col_max, col_size);
+                }
+            }
+            col_max_arr[i] = col_max;
+        }
+
+        int *row_max_arr = new int[row_size];
+        for(int i = 0; i < row_size; i++){
+            unsigned int row_max = 1;
+            for(int j = 0; j < col_size; j++){
+                if(data_base[i][j] != nullptr){
+                    unsigned int row_size = find_count(data_base[i][j]->stringify(), '\n');
+                    row_max = std::max(row_max, row_size);
+                }
+            }
+            row_max_arr[i] = row_max;
+        }
+
+        //1행 데이터 쌓기
+        total_table += "    ";
+        int total_width = 4;
+        for(int i = 0; i < col_size; i++){
+            std::string str_col = col_num_to_str(i);
+            std::string repeat = repeat_char(col_max_arr[i]-str_col.size(), ' ');
+            total_table += " | "+str_col+repeat;
+            total_width += 3+col_max_arr[i];
+        }
+        // 나머지 행 쌓기
+        total_table += "\n";
+        for(int i = 0; i < row_size; i++){
+            total_table += repeat_char(total_width, '-')+'\n';
+            int max_row = row_max_arr[i];
+            for(int e = 0; e < max_row; e++){
+                total_table += std::to_string(i+1)+ repeat_char(4-std::to_string(i+1).size(), ' ');
+                for(int j = 0; j < col_size; j++){
+                    int max_col = col_max_arr[j];
+                    std::string str = "";
+                    if(data_base[i][j] != nullptr) {
+                        std::string data = data_base[i][j]->stringify();
+                        str = find_str(data, '\n', e);
+                    }
+                    //std::cout << str << std::endl;
+                    total_table += " | "+str+repeat_char(max_col-str.length(), ' ');
+                }
+                total_table += '\n';
+            }
+        }
+        return total_table;
+    }
+
+private:
+    std::string repeat_char(int n, char c){
+        std::string str = "";
+        for(int i = 0; i < n; i++) str.push_back(c);
+        return str;
+    }
+    std::string col_num_to_str(int n){
+        std::string str = "";
+        if(n < 26) {
+           char a = 'A'+n;
+           str.push_back(a);
+        }
+        else{
+           char first = 'A'+n/26-1;
+           char second = 'A'+n%26;
+           str.push_back(first);
+           str.push_back(second);
+        }
+        return str;
+    }
+
+    int find_count(const std::string& str, char c){
+        int count = 1;
+        for(int i = 0; i < str.length(); i++) if(str[i] == c){
+            count++;
+        }
+        return count;
+    }
+
+    std::string find_str(const std::string& data, char c, int index){
+        std::string s = "";
+        int count = 0;
+        for(int i = 0; i < data.length(); i++){
+            if(data[i] == c){
+                count++;
+                continue;
+            }
+           if(count == index) s.push_back(data[i]);
+        }
+        return s;
     }
 };
+
 class CSVTable : public Table {
 public:
     CSVTable(const int row_size, const int col_size): Table(row_size, col_size){}
