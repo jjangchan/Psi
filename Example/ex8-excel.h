@@ -177,12 +177,12 @@ public:
     }
     virtual std::string print_table() = 0;
 
-    void reg_cell(Cell *c, int row, int col){
-        if(row >= row_size || col >= col_size) return;
-        if(data_base[row][col] != nullptr){
-            delete data_base[row][col];
+    void reg_cell(Cell *c){
+        if(c->x >= row_size || c->y >= col_size) return;
+        if(data_base[c->x][c->y] != nullptr){
+            delete data_base[c->x][c->y];
         }
-        data_base[row][col] = c;
+        data_base[c->x][c->y] = c;
     }
 
     int to_numeric(const std::string& s){
@@ -230,6 +230,8 @@ public:
 
     std::string print_table() override{
         std::string total_table;
+
+        // col 최대 사이즈 체크
         int *col_max_arr = new int[col_size];
         for(int i = 0; i < col_size; i++){
             unsigned int col_max = 2;
@@ -242,6 +244,7 @@ public:
             col_max_arr[i] = col_max;
         }
 
+        // row 최대 사이즈 체크
         int *row_max_arr = new int[row_size];
         for(int i = 0; i < row_size; i++){
             unsigned int row_max = 1;
@@ -268,14 +271,15 @@ public:
         for(int i = 0; i < row_size; i++){
             total_table += repeat_char(total_width, '-')+'\n';
             int max_row = row_max_arr[i];
-            for(int e = 0; e < max_row; e++){
-                total_table += std::to_string(i+1)+ repeat_char(4-std::to_string(i+1).size(), ' ');
+            for(int e = 0; e < max_row; e++){ // row 최대 사이즈 만큼 for 문 돌림
+                std::string str_num = (e != 0) ? "" : std::to_string(i+1);
+                total_table += str_num+ repeat_char(4-str_num.size(), ' ');
                 for(int j = 0; j < col_size; j++){
                     int max_col = col_max_arr[j];
                     std::string str = "";
                     if(data_base[i][j] != nullptr) {
                         std::string data = data_base[i][j]->stringify();
-                        str = find_str(data, '\n', e);
+                        str = find_str(data, '\n', e); // 개행문자 끊기
                     }
                     //std::cout << str << std::endl;
                     total_table += " | "+str+repeat_char(max_col-str.length(), ' ');
@@ -333,15 +337,49 @@ class CSVTable : public Table {
 public:
     CSVTable(const int row_size, const int col_size): Table(row_size, col_size){}
     std::string print_table() override{
-        return "";
+        std::string s = "";
+        for (int i = 0; i < row_size; i++) {
+            for (int j = 0; j < col_size; j++) {
+                if (j >= 1) s += ",";
+                // CSV 파일 규칙에 따라 문자열에 큰따옴표가 포함되어 있다면 "" 로
+                // 치환하다.
+                std::string temp;
+                if (data_base[i][j]) temp = data_base[i][j]->stringify();
+
+                for (int k = 0; k < temp.length(); k++) {
+                    if (temp[k] == '"') {
+                        // k 의 위치에 " 를 한 개 더 집어넣는다.
+                        temp.insert(k, 1, '"');
+
+                        // 이미 추가된 " 를 다시 확인하는 일이 없게 하기 위해
+                        // k 를 한 칸 더 이동시킨다.
+                        k++;
+                    }
+                }
+                temp = '"' + temp + '"';
+                s += temp;
+            }
+            s += '\n';
+        }
+        return s;
     }
 };
 class HTMLTable : public Table {
-    const std::string table_name = "TextTable";
 public:
     HTMLTable(const int row_size, const int col_size): Table(row_size, col_size){}
     std::string print_table() override {
-        return "";
+        std::string table = "<table border='1' cellpadding='10'>";
+        for(int i = 0; i < row_size; i++){
+            table += "<tr>";
+            for(int j = 0; j < col_size; j++){
+                table += "<td>";
+                if(data_base[i][j] != nullptr) table += data_base[i][j]->stringify();
+                table += "</td>";
+            }
+            table += "</tr>";
+        }
+        table += "</table>";
+        return table;
     }
 };
 
