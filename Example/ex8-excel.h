@@ -141,17 +141,41 @@ public:
 
 class Table;
 class Cell{
-private:
+protected:
     friend Table;
     Table* table; // 어느 테이블?
-    std::string data;
     int x,y; // 테이블 위치
 public:
-    Cell(std::string _data, int _x, int _y, Table* _t) : data(_data), x(_x), y(_y), table(_t){}
-    virtual std::string stringify(){return data;}
-    virtual int to_numeric(){return 0;}
+    virtual std::string stringify() = 0;
+    virtual int to_numeric() = 0;
+    Cell(int _x, int _y, Table* _t) : x(_x), y(_y), table(_t){}
+};
 
+class StringCell : public Cell {
 private:
+    std::string data;
+public:
+    StringCell(std::string data, int x, int y, Table* t) : data(data), Cell(x, y, t){}
+    std::string stringify() override {return data;}
+    int to_numeric() override {return 0;}
+};
+
+class NumberCell: public Cell {
+private:
+    int data;
+public:
+    NumberCell(int data, int x, int y, Table* t) : data(data), Cell(x, y, t){}
+    std::string stringify() override {return std::to_string(data);}
+    int to_numeric() override {return data;}
+};
+
+class DateCell: public Cell{
+private:
+    time_t data;
+public:
+    DateCell(time_t d, int x, int y, Table* t) : data(d), Cell(x, y, t){}
+    std::string stringify() override{}
+    int to_numeric() override {}
 };
 
 
