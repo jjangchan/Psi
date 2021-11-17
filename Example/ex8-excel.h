@@ -173,9 +173,32 @@ class DateCell: public Cell{
 private:
     time_t data;
 public:
-    DateCell(time_t d, int x, int y, Table* t) : data(d), Cell(x, y, t){}
-    std::string stringify() override{}
-    int to_numeric() override {}
+    DateCell(std::string s, int x, int y, Table* t) : data(d), Cell(x, y, t){
+        int year = std::atoi(s.c_str());
+        int month = std::atoi(s.c_str()+5);
+        int day = std::stoi(s.c_str()+8);
+
+        tm timeinfo;
+
+        timeinfo.tm_year = year- 1900;
+        timeinfo.tm_mon = month - 1;
+        timeinfo.tm_mday = day;
+        timeinfo.tm_hour = 0;
+        timeinfo.tm_min = 0;
+        timeinfo.tm_sec = 0;
+
+        data = mktime(&timeinfo);
+    }
+
+    std::string stringify() override{
+        char buf[50];
+        tm temp;
+        localtime_s(&temp, &data);
+        strftime(buf, 50, "%F", &temp);
+        return std::string(buf);
+    }
+
+    int to_numeric() override {return static_cast<int>(data);}
 };
 
 
