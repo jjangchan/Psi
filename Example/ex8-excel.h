@@ -173,7 +173,7 @@ class DateCell: public Cell{
 private:
     time_t data;
 public:
-    DateCell(std::string s, int x, int y, Table* t) : data(d), Cell(x, y, t){
+    DateCell(std::string s, int x, int y, Table* t) : Cell(x, y, t){
         int year = std::atoi(s.c_str());
         int month = std::atoi(s.c_str()+5);
         int day = std::stoi(s.c_str()+8);
@@ -199,6 +199,71 @@ public:
     }
 
     int to_numeric() override {return static_cast<int>(data);}
+};
+
+class ExprCell: public Cell{
+private:
+    std::string data;
+    std::string* parsed_expr;
+    Vector expr_v;
+
+    // 연산자 우선순위 반환
+    int precedence(char c){
+        switch (c) {
+            case '(':
+            case '[':
+            case '{':
+                return 0;
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+        }
+        return 0;
+    }
+
+    // 수식 분석
+    void parse_expression(){
+        // 수식 전체 () 감싸기
+        // 남아있는 연산자 push
+        data.insert(0, "(");
+        data.push_back(')');
+
+        Stack stack;
+        for(int i = 0; i < data.length(); i++){
+            if(isalpha(data[i])){
+                std::string str = "";
+                while(isalpha(data[i]) || isdigit(data[i])){
+                    str.push_back(data[i]);
+                    i++;
+                }
+                i--;
+                expr_v.push_back(str);
+            }
+        }
+
+    }
+
+    bool is_number(){
+        bool integer_part = true;
+        for(int i = 0; i < data.length(); i++){
+            if(integer_part && data[i] == '.'){
+                    if(i == 0 || i == data.length()-1) return false;
+                    integer_part = false;
+            }
+            else if(!isdigit(data[i])) return false;
+        }
+        return true;
+    }
+
+public:
+    ExprCell(std::string data, int x , int y, Table* t) : data(data), Cell(x, y, t){}
+
+    std::string stringify() override{return data;}
+    int to_numeric() override;
+
 };
 
 
@@ -233,8 +298,17 @@ public:
     }
 
     int to_numeric(const std::string& s){
-        int col = s[0] - 'A';
-        int row = atoi(s.c_str()+1)-1;
+        int index = 0;
+        int array[s.length()];
+        for(int i = 0; i < s.length(); i++){
+            if(!isalpha(s[i])) break;
+            array[i] = s[i]-'A'+1;
+            index++;
+        }
+        int col = 0;
+        for(int i = 0; i < index; i++) col += (array[i]*std::pow(26, index-(i+1)));
+        col -= 1;
+        int row = atoi(s.c_str()+index)-1;
         if(col < col_size && row < row_size){
             if(data_base[row][col] != nullptr) return data_base[row][col]->to_numeric();
         }
@@ -430,5 +504,35 @@ public:
     }
 };
 
+int ExprCell::to_numeric() {
+    NumStack stack;
+    for(int i = 0; i < expr_v.size(); i++){
+        std::string str = expr_v[i];
+
+        //Cell(A1, B1...)
+        if(isalpha(str[0])) stack.push(table->to_numeric(str));
+        // Number 일 경우
+        else if(is_number()) stack.push(atof(data.c_str()));
+        else{
+            double y = stack.pop();
+            double x = stack.pop();
+            switch (str[0]) {
+                case '+':
+                    stack.push(x+y);
+                    break;
+                case '-':
+                    stack.push(x-y);
+                    break;
+                case '*':
+                    stack.push(x*y);
+                    break;
+                case '/':
+                    stack.push(x/y);
+                    break;
+            }
+        }
+    }
+    return stack.pop();
+}
 
 #endif //MAIN_CPP_EX8_EXCEL_H

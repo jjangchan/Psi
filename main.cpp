@@ -2,9 +2,14 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <cmath>
 #include "Example/ex8-excel.h"
 
 int main() {
+
+
+
+
     CSVTable table(5,5);
     std::ofstream out("test.csv");
     table.reg_cell(new StringCell("Hello~", 0, 0, &table));
