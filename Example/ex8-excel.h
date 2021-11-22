@@ -8,6 +8,9 @@
 #include <sstream>
 #include <algorithm>
 #include <iostream>
+#include <ctime>
+#include <cmath>
+#include <fstream>
 
 class Vector{
 private:
@@ -85,7 +88,7 @@ public:
         return str;
     }
 
-    std::string peak(){
+    std::string peek(){
         return current->data;
     }
 
@@ -147,7 +150,7 @@ protected:
     int x,y; // 테이블 위치
 public:
     virtual std::string stringify() = 0;
-    virtual int to_numeric() = 0;
+    virtual double to_numeric() = 0;
     Cell(int _x, int _y, Table* _t) : x(_x), y(_y), table(_t){}
 };
 
@@ -157,16 +160,16 @@ private:
 public:
     StringCell(std::string data, int x, int y, Table* t) : data(data), Cell(x, y, t){}
     std::string stringify() override {return data;}
-    int to_numeric() override {return 0;}
+    double to_numeric() override {return 0;}
 };
 
 class NumberCell: public Cell {
 private:
-    int data;
+    double data;
 public:
     NumberCell(int data, int x, int y, Table* t) : data(data), Cell(x, y, t){}
     std::string stringify() override {return std::to_string(data);}
-    int to_numeric() override {return data;}
+    double to_numeric() override {return data;}
 };
 
 class DateCell: public Cell{
@@ -198,13 +201,13 @@ public:
         return std::string(buf);
     }
 
-    int to_numeric() override {return static_cast<int>(data);}
+    double to_numeric() override {return static_cast<int>(data);}
 };
 
 class ExprCell: public Cell{
 private:
     std::string data;
-    std::string* parsed_expr;
+    //std::string* parsed_expr;
     Vector expr_v;
 
     // 연산자 우선순위 반환
@@ -241,28 +244,53 @@ private:
                 }
                 i--;
                 expr_v.push_back(str);
+            }else if(isdigit(data[i])){
+                int count = is_number(i);
+                expr_v.push_back(data.substr(i, count));
+                i += count-1;
+            }else if(data[i] == '{' || data[i] == '(' || data[i] == '['){
+                stack.push(data.substr(i,1));
+            }else if(data[i] == '}' || data[i] == ')' || data[i] == ']'){
+                std::string str = stack.pop();
+                while(str[0] != '{' && str[0] != '(' && str[0] != '['){
+                    expr_v.push_back(str);
+                    str = stack.pop();
+                }
+            }else if(data[i] == '*' || data[i] == '+' || data[i] == '-' || data[i] == '/'){
+                while(!stack.is_empty() && precedence(stack.peek()[0]) >= precedence(data[i])){
+                    expr_v.push_back(stack.pop());
+                }
+                stack.push(data.substr(i,1));
             }
         }
-
     }
 
-    bool is_number(){
+    int is_number(const int start = 0){
         bool integer_part = true;
-        for(int i = 0; i < data.length(); i++){
+        int count = 0;
+        for(int i = start; i < data.length(); i++){
             if(integer_part && data[i] == '.'){
-                    if(i == 0 || i == data.length()-1) return false;
+                    if(i == 0 || i == data.length()-1) return count;
                     integer_part = false;
             }
-            else if(!isdigit(data[i])) return false;
+            else if(!isdigit(data[i])) return count;
+            count++;
         }
-        return true;
+        return count;
     }
 
 public:
     ExprCell(std::string data, int x , int y, Table* t) : data(data), Cell(x, y, t){}
+    ~ExprCell(){
+        //if(parsed_expr != nullptr) delete parsed_expr;
+    }
 
-    std::string stringify() override{return data;}
-    int to_numeric() override;
+    std::string stringify() override{
+        parse_expression();
+        data = std::to_string(to_numeric());
+        return data;
+    }
+    double to_numeric() override;
 
 };
 
@@ -297,7 +325,7 @@ public:
         data_base[c->x][c->y] = c;
     }
 
-    int to_numeric(const std::string& s){
+    double to_numeric(const std::string& s){
         int index = 0;
         int array[s.length()];
         for(int i = 0; i < s.length(); i++){
@@ -306,7 +334,7 @@ public:
             index++;
         }
         int col = 0;
-        for(int i = 0; i < index; i++) col += (array[i]*std::pow(26, index-(i+1)));
+        for(int i = 0; i < index; i++) col += (static_cast<int>(array[i]*std::pow(26, index-(i+1))));
         col -= 1;
         int row = atoi(s.c_str()+index)-1;
         if(col < col_size && row < row_size){
@@ -315,7 +343,7 @@ public:
         return 0;
     }
 
-    int to_numeric(int row, int col){
+    double to_numeric(int row, int col){
         if(col < col_size && row < row_size){
             if(data_base[row][col] != nullptr) return data_base[row][col]->to_numeric();
         }
@@ -504,7 +532,7 @@ public:
     }
 };
 
-int ExprCell::to_numeric() {
+double ExprCell::to_numeric() {
     NumStack stack;
     for(int i = 0; i < expr_v.size(); i++){
         std::string str = expr_v[i];
@@ -512,7 +540,7 @@ int ExprCell::to_numeric() {
         //Cell(A1, B1...)
         if(isalpha(str[0])) stack.push(table->to_numeric(str));
         // Number 일 경우
-        else if(is_number()) stack.push(atof(data.c_str()));
+        else if(isdigit(str[0])) stack.push(atof(str.c_str()));
         else{
             double y = stack.pop();
             double x = stack.pop();

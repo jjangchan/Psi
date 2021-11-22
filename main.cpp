@@ -1,20 +1,15 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <ctime>
-#include <cmath>
 #include "Example/ex8-excel.h"
 
 int main() {
+    TextTable table(5, 5);
+    table.reg_cell(new NumberCell(2, 1, 1, &table));
+    table.reg_cell(new NumberCell(3, 1, 2, &table));
 
+    table.reg_cell(new NumberCell(4, 2, 1, &table));
+    table.reg_cell(new NumberCell(5, 2, 2, &table));
+    table.reg_cell(new ExprCell("B2+B3*(C2+C3-2)", 3, 2, &table));
+    table.reg_cell(new StringCell("B2 + B3 * ( C2 + C3 - 2 ) = ", 3, 1, &table));
 
-
-
-    CSVTable table(5,5);
-    std::ofstream out("test.csv");
-    table.reg_cell(new StringCell("Hello~", 0, 0, &table));
-    table.reg_cell(new StringCell("C++", 0, 1, &table));
-    table.reg_cell(new StringCell("Programming", 1, 1, &table));
-    out << table;
+    std::cout << table;
     return 1;
 }
