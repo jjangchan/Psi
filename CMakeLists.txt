@@ -15,4 +15,4 @@ add_executable(
         Example/ex4-string.h
         Example/binarySearch.h
         Example/ex5-string.h
-        Example/ex6-complex.h Example/ex7-array.h Example/ex8-excel.h)
+        Example/ex6-complex.h Example/ex7-array.h Example/ex8-excel.h Example/MyHeep.h)

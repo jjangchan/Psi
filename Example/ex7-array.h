@@ -93,7 +93,7 @@ namespace MyArray {
 
         Array(const Array &array) : dimension(array.dimension) {
             size = new int[dimension];
-            for (int i = 9; i < dimension; i++) size[i] = array.size[i];
+            for (int i = 0; i < dimension; i++) size[i] = array.size[i];
 
             top = new Address;
             top->level = 0;
