@@ -2,8 +2,8 @@
 // Created by momantic03 on 2021-09-10.
 //
 
-#ifndef EX2_NEW_DELETE_H_EX5MYSTRING_H
-#define EX2_NEW_DELETE_H_EX5MYSTRING_H
+#ifndef EX2_NEW_DELETE_H_EX5_STRING_H
+#define EX2_NEW_DELETE_H_EX5_STRING_H
 
 #include <iostream>
 
@@ -46,31 +46,31 @@ public:
         delete[] string_content;
     }
 
-    MyString operator+(const MyString& str) const{
-        char *temp_str = new char[string_length+str.string_length];
-        for(int i = 0; i < string_length+str.string_length; i++)
-            temp_str[i] = (i < string_length) ? string_content[i] : str.string_content[i-string_length];
-        MyString temp(temp_str);
-        std::cout << "operator : " << &temp << std::endl;
-        delete[] temp_str;
-        return temp;
-    }
+
+    friend  MyString operator+(const MyString& str1, const MyString& str2);
 
     MyString& operator+=(const MyString& str){
+        std::cout << "operator+=" << std::endl;
         (*this) = (*this) + str;
         return (*this);
     }
 
     MyString& operator=(const MyString& string){
-        // 수정해야함
+        std::cout << "operator=" << std::endl;
         string_length = string.string_length;
-        if(string.string_length > memory_capacity) memory_capacity = string.string_length;
-        delete []string_content;
-        string_content = new char[string.string_length];
+        if(string.string_length > memory_capacity){
+            memory_capacity = (memory_capacity*2 > string.string_length+string_length) ? memory_capacity*2 :  string_length+string.string_length;
+            delete []string_content;
+            string_content = new char[string.string_length];
+        }
         for(int i = 0; i < string_length; i++){
             string_content[i] = string.string_content[i];
         }
         return *this;
+    }
+
+    char& operator[](const int index){
+        return string_content[index];
     }
 
     int length() const{
@@ -225,5 +225,19 @@ private:
 
 };
 
+MyString operator+(const MyString &str1, const MyString &str2) {
+    std::cout << "operator+" << std::endl;
+    int length = str1.string_length+str2.string_length;
+    char* str_temp = new char[length+1];
 
-#endif //EX2_NEW_DELETE_H_EX5MYSTRING_H
+    for(int i =0; i < length; i++){
+        str_temp[i] = (i < str1.string_length) ? str1.string_content[i] : str2.string_content[i-str1.string_length];
+    }
+    str_temp[length] = 0;
+    MyString temp(str_temp);
+    delete []str_temp;
+    return temp;
+}
+
+
+#endif //EX2_NEW_DELETE_H_EX5_STRING_H
