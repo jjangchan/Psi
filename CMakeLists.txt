@@ -13,6 +13,8 @@ add_executable(
         Example/ex2-new-delete.h
         Example/ex3-math.h
         Example/ex4-string.h
-        Example/binarySearch.h
         Example/ex5-string.h
-        Example/ex6-complex.h Example/ex7-array.h)
+        Example/ex6-complex.h
+        Example/ex7-array.h
+        Example/ex8-excel.h
+        Example/ex9-template-vector.h)

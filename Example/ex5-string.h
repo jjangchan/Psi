@@ -1,5 +1,5 @@
 //
-// Created by momantic03 on 2021-09-10.
+// Created by jjangchan on 2021-09-10.
 //
 
 #ifndef EX2_NEW_DELETE_H_EX5_STRING_H

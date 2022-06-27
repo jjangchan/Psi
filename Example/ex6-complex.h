@@ -5,6 +5,9 @@
 #ifndef PSI_EX6COMPLEX_H
 #define PSI_EX6COMPLEX_H
 
+#include <iostream>
+#include <string>
+
 class Complex{
 private:
     double real, img;
