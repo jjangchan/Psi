@@ -17,4 +17,4 @@ add_executable(
         Example/ex6-complex.h
         Example/ex7-array.h
         Example/ex8-excel.h
-        Example/ex9-template-vector.h)
+        Example/ex9-template-vector.h Example/ex10-template-parameter-pack.h Example/ex11-tmp.h)

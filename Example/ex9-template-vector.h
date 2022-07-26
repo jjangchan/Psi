@@ -48,7 +48,9 @@ public:
     }
 
     int length() const { return size;}
+
 };
+
 
 template<>
 class Vector<bool>{
@@ -87,7 +89,7 @@ public:
                 // current index is true
                 data[previous/32] |= (1 << (previous%32));
             }else{
-                unsigned int all_ones_except_prev = 0xFFFFFFFF;
+                unsigned int all_ones_except_prev = 0xFFFFFFFF; // 1111 ..~~.. 1111
                 all_ones_except_prev ^= (1 << (previous%32));
                 data[previous/32] &= all_ones_except_prev;
             }
