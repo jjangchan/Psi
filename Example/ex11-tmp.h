@@ -40,4 +40,19 @@ struct _Ratio_add{
 template <class R1, class R2>
 struct Ratio_add : _Ratio_add<R1,R2>::type{};
 
+template <int N>
+struct fibonacci{
+    static const int value = (fibonacci<N-2>::value+fibonacci<N-1>::value)%1234567;
+};
+
+template<>
+struct fibonacci<1>{
+   static const int value = 1;
+};
+
+template<>
+struct fibonacci<2>{
+    static const int value = 1;
+};
+
 #endif //MAIN_CPP_EX11_TMP_H
